@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// ✅ Dynamically import TSStreamPlayer (prevents SSR window errors)
 const TSStreamPlayer = dynamic(() => import("../components/TSStreamPlayer"), {
   ssr: false,
 });
@@ -14,7 +13,8 @@ export default function Home() {
 
   const handlePlay = () => {
     if (url.trim() !== "") {
-      setCurrentUrl(url.trim());
+      // ✅ Use proxy route
+      setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url.trim())}`);
     }
   };
 
