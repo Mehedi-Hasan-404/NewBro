@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import mpegts from 'mpegts.js';
+import Hls from 'hls.js';
 
 interface TSStreamPlayerProps {
   url: string;
@@ -10,15 +11,42 @@ export default function TSStreamPlayer({ url }: TSStreamPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (mpegts.getFeatureList().mseLivePlayback && videoRef.current) {
-      const player = mpegts.createPlayer({ type: 'mpegts', url }, { isLive: true });
-      player.attachMediaElement(videoRef.current);
+    const video = videoRef.current;
+    if (!video) return;
+
+    let player: any;
+
+    // Case 1: HLS (.m3u8)
+    if (url.endsWith(".m3u8")) {
+      if (Hls.isSupported()) {
+        player = new Hls();
+        player.loadSource(url);
+        player.attachMedia(video);
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Safari native support
+        video.src = url;
+      }
+    }
+
+    // Case 2: MPEG-TS (.ts or raw stream)
+    else if (mpegts.getFeatureList().mseLivePlayback) {
+      player = mpegts.createPlayer({ type: 'mpegts', url }, { isLive: true });
+      player.attachMediaElement(video);
       player.load();
       player.play();
-      return () => player.destroy();
-    } else if (videoRef.current) {
-      videoRef.current.src = url; // fallback
     }
+
+    // Case 3: Fallback
+    else {
+      video.src = url;
+    }
+
+    return () => {
+      if (player) {
+        if (player.destroy) player.destroy();
+        else if (player.stopLoad) player.stopLoad();
+      }
+    };
   }, [url]);
 
   return (
