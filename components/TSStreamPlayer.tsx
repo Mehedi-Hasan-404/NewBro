@@ -23,7 +23,6 @@ export default function TSStreamPlayer({ url }: TSStreamPlayerProps) {
 
   return (
     <div className="w-full max-w-3xl bg-gray-800 p-4 rounded-2xl shadow-lg">
-      <h1 className="text-xl font-bold mb-3 text-center">🎬 VLC Stream Player</h1>
       <video
         ref={videoRef}
         controls
