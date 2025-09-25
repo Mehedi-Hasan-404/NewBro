@@ -1,6 +1,12 @@
 'use client';
+
 import { useState } from 'react';
-import TSStreamPlayer from "../components/TSStreamPlayer";  // ✅ fixed import
+import dynamic from 'next/dynamic';
+
+// ✅ Dynamically import TSStreamPlayer (prevents SSR window errors)
+const TSStreamPlayer = dynamic(() => import("../components/TSStreamPlayer"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [url, setUrl] = useState("");
