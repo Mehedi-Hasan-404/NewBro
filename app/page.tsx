@@ -3,11 +3,13 @@ import { useState } from 'react';
 import TSStreamPlayer from "@/components/TSStreamPlayer";
 
 export default function Home() {
-  const [url, setUrl] = useState("http://103.182.170.32:8888/play/a03r");
-  const [currentUrl, setCurrentUrl] = useState(url);
+  const [url, setUrl] = useState("");
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
 
   const handlePlay = () => {
-    setCurrentUrl(url);
+    if (url.trim() !== "") {
+      setCurrentUrl(url.trim());
+    }
   };
 
   return (
@@ -20,7 +22,7 @@ export default function Home() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className="flex-1 px-4 py-2 rounded-lg text-black outline-none"
-          placeholder="Enter stream URL..."
+          placeholder="Enter stream URL (e.g. http://.../play/xyz)"
         />
         <button
           onClick={handlePlay}
@@ -30,7 +32,11 @@ export default function Home() {
         </button>
       </div>
 
-      <TSStreamPlayer url={currentUrl} />
+      {currentUrl ? (
+        <TSStreamPlayer url={currentUrl} />
+      ) : (
+        <p className="text-gray-400">Paste a URL above to start streaming.</p>
+      )}
     </main>
   );
 }
