@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import TSStreamPlayer from "@/components/TSStreamPlayer";
+import TSStreamPlayer from "../components/TSStreamPlayer";  // ✅ fixed import
 
 export default function Home() {
   const [url, setUrl] = useState("");
